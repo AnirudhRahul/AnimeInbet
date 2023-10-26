@@ -2,5 +2,6 @@
 *.pt
 *.jpg
 *.pyc
-*.png
-data/*
+
+data/ml100_norm/*
+data/ml144_norm_100_44_split/*

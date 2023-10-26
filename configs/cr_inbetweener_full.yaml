@@ -21,22 +21,22 @@ optimizer:
 
 data:
     train:
-        root: 'data/ml144_norm_100_44_split/'
+        root: 'data/anime/'
         batch_size: 1
-        gap: 5
-        type: 'train'
+        gap: 3
+        type: 'all'
         model: None
         action: None
         mode: 'train'
     test:
-        root: 'data/ml100_norm/'
+        root: 'data/anime/'
         batch_size: 1
-        gap: 5
+        gap: 3
         type: 'all'
         model: None
         action: None
         mode: 'eval'
-        use_vs: False
+        use_vs: True
 
 testing:
     ckpt_epoch: 20
@@ -45,7 +45,7 @@ batch_size: 8
 
 corr_weights: './corr/experiments/vtx_corr/ckpt/epoch_50.pt'
 
-imwrite_dir: ./inbetween_results/test_gap=5
+imwrite_dir: ./inbetween_results/anime_gap_5
 
 expname: inbetweener_full
 epoch: 20

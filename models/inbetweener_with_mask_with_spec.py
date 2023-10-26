@@ -532,7 +532,6 @@ class InbetweenerTM(nn.Module):
             im0_erode = tensor_erode(im0_erode, 7)
             im1_erode = tensor_erode(im1_erode, 7)
 
-
             
             kpt0t = kpts0 + motion_output0 / 2
             kpt1t = kpts1 + motion_output1 / 2
@@ -543,7 +542,7 @@ class InbetweenerTM(nn.Module):
             ##################################################
 
             if 'topo0' in data and 'topo1' in data:
-                # print(len(data['topo0'][0]), len(data['topo1']), flush=True)
+                # print("Topo1", len(data['topo0'][0]), len(data['topo1']), flush=True)
                 for node, nbs in enumerate(data['topo0'][0]):
                     for nb in nbs:
                         if vb0[0, nb] > 0 and vb0[0, node] > 0 and ((kpt0t[0, node] - kpt0t[0, nb]) ** 2).sum() / (((kpts0[0, node] - kpts0[0, nb]) ** 2).sum() + 1e-7) > 5:
@@ -559,7 +558,7 @@ class InbetweenerTM(nn.Module):
             kpt0t = kpts0 + motion_output0 * 1
             kpt1t = kpts1 + motion_output1 * 1
             if 'topo0' in data and 'topo1' in data:
-                ##  print(len(data['topo0'][0]), len(data['topo1']), flush=True)
+                print("Topo2", len(data['topo0'][0]), len(data['topo1']), flush=True)
                 for node, nbs in enumerate(data['topo0'][0]):
                     for nb in nbs:
 
@@ -575,6 +574,8 @@ class InbetweenerTM(nn.Module):
                     for nb in nbs:
                         
                         center = ((kpt1t[0, node] + kpt1t[0, nb]) * 0.5).int()[0]
+                        if center[0] >= 720 or center[1] >= 720:
+                            continue
                         if vb1[0, nb] > 0  and vb1[0, node] > 0 and im0_erode[0,:, center[1], center[0]].mean() > 0.8:
                             vb1[0, nb] = -1
                             vb1[0, node] = -1

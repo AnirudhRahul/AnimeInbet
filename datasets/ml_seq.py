@@ -47,7 +47,7 @@ def matched_motion(v2d1, v2d2, match12, motion_pre=None):
 def unmatched_motion(topo1, v2d1, motion12, match12):
     pos = np.arange(len(topo1))
     masked = (match12 == -1)
-
+    # print(pos.shape, masked.shape)
     round = 0
     former_len = 0
     while(len(pos[masked]) > 0):
@@ -151,7 +151,7 @@ class MixamoLineArtMotionSequence(data.Dataset):
         if use_vs:
             print('>>>>>>>> Using VS labels')
             self.use_vs = True
-            label_root = osp.join(root, split, 'labels_vs')
+            # label_root = osp.join(root, split, 'labels_vs')
         image_root = osp.join(root, split, 'frames')
         self.spectral = Spectral(64,  normalized=False)
 
@@ -170,9 +170,13 @@ class MixamoLineArtMotionSequence(data.Dataset):
                 continue
             image_list = sorted(glob(osp.join(image_root, clip, '*.png')))
             label_list = sorted(glob(osp.join(label_root, clip, '*.json')))
+            print(image_list)
+            print("GAP IS", gap)
             if len(image_list) != len(label_list):
                 print(clip, flush=True)
                 continue
+            # self.image_list = [image_list]
+            # self.label_list = [label_list]
             for i in range(len(image_list) - (gap+1)):
                 self.image_list += [ [image_list[jj] for jj in range(i, i + gap + 2)] ]
             for i in range(len(label_list) - (gap+1)):
@@ -233,6 +237,7 @@ class MixamoLineArtMotionSequence(data.Dataset):
 
             _, match12, matc21 = ids_to_mat(id1, id2)
 
+            # print("UNMATCHED 1")
             if ii <= start_frame + gap:
                 motion01 = matched_motion(v2d1, v2d2, match12.astype(int), motion01)
                 motion01 = unmatched_motion(topo1, v2d1, motion01, match12.astype(int))
@@ -290,6 +295,7 @@ class MixamoLineArtMotionSequence(data.Dataset):
                 id2 = np.arange(len(id2))
             _, match12, _ = ids_to_mat(id1, id2)
 
+            # print("UNMATCHED 2")
             if ii >= start_frame + gap + 1:
                 motion21 = matched_motion(v2d1, v2d2, match12.astype(int), motion21)
                 motion21 = unmatched_motion(topo1, v2d1, motion21, match12.astype(int))
@@ -516,7 +522,7 @@ def worker_init_fn(worker_id):
 
 def fetch_dataloader(args, type='train',):
     lineart = MixamoLineArtMotionSequence(root=args.root, gap=args.gap, split=args.type, model=args.model, action=args.action, mode=args.mode if hasattr(args, 'mode') else 'train', use_vs=args.use_vs if hasattr(args, 'use_vs') else False)
-    
+    print("Fetching data args", args)
     if args.mode == 'train':
         lineart = MixamoLineArtMotionSequence(root=args.root, gap=args.gap, split=args.type, model=args.model, action=args.action, mode=args.mode if hasattr(args, 'mode') else 'train')
     
@@ -525,6 +531,6 @@ def fetch_dataloader(args, type='train',):
             pin_memory=True, shuffle=True, num_workers=16, drop_last=True, worker_init_fn=worker_init_fn)
     else:
         loader = data.DataLoader(lineart, batch_size=args.batch_size, 
-            pin_memory=True, shuffle=False, num_workers=8)
+            pin_memory=True, shuffle=False, num_workers=1)
     return loader
 

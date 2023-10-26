@@ -217,7 +217,7 @@ class DraftRefine():
             else:
                 ckpt_path = os.path.join(self.ckptdir, f"epoch_{epoch_tested}.pt")
                 # self.device = torch.device('cuda' if config.cuda else 'cpu')
-                print("Evaluation...")
+                print("Evaluation 1...")
                 checkpoint = torch.load(ckpt_path)
                 model.load_state_dict(checkpoint['model'])
             model.eval()
@@ -266,7 +266,7 @@ class DraftRefine():
             for i_eval, data in enumerate(tqdm(test_loader, desc='Predicting Vtx Corr...')):
                 # if i_eval == 34:
                 #     continue
-                
+                print("ITER", i_eval)
                 pred = model(data)
                 for k, v in pred.items():
                     # print(k, flush=True)
@@ -301,6 +301,7 @@ class DraftRefine():
                 img_vis = visualize(pred)
                 # mean_cd.append(cd.item())
                 file_name = pred['file_name'][0].split('/')
+                # print("Called imwrite", config.imwrite)
                 cv2.imwrite(os.path.join(config.imwrite_dir, (file_name[-2] + '_' + file_name[-1]) + 'png'), img_vis)
 
                 # cv2.imwrite(os.path.join(eval_output_dir, pred['file_name'][0].replace('/', '_') + '.jpg'), img_vis)
@@ -335,7 +336,7 @@ class DraftRefine():
             else:
                 ckpt_path = os.path.join(self.ckptdir, f"epoch_{epoch_tested}.pt")
                 # self.device = torch.device('cuda' if config.cuda else 'cpu')
-                print("Evaluation...")
+                print("Evaluation 2...")
                 checkpoint = torch.load(ckpt_path)
                 model.load_state_dict(checkpoint['model'])
             model.eval()

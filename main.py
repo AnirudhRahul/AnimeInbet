@@ -25,7 +25,7 @@ def main():
     # parse arguments and load config
     args = parse_args()
     with open(args.config) as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
 
     for k, v in vars(args).items():
         config[k] = v
